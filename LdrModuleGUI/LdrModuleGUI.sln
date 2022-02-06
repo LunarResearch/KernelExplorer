@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.218
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LdrModuleGUI", "LdrModuleGUI\LdrModuleGUI.vcxproj", "{F8ED0F1B-28E5-418F-87F9-5036719D5C32}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Debug|x64.ActiveCfg = Debug|x64
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Debug|x64.Build.0 = Debug|x64
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Debug|x86.ActiveCfg = Debug|Win32
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Debug|x86.Build.0 = Debug|Win32
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Release|x64.ActiveCfg = Release|x64
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Release|x64.Build.0 = Release|x64
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Release|x86.ActiveCfg = Release|Win32
+		{F8ED0F1B-28E5-418F-87F9-5036719D5C32}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {787260A9-7D11-4578-A5FC-081C413C1E10}
+	EndGlobalSection
+EndGlobal
