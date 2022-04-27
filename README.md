@@ -23,7 +23,7 @@ Recommended to used Windows 10 or Windows 11.
 * 100% [Free Software](https://www.gnu.org/philosophy/free-sw.en.html) ([GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html))
 
 
-## Building the project
+## Building the project and using
 
 Requires Visual Studio (2019 or later).
 
@@ -35,3 +35,10 @@ After compilation place the executables in the following order:
 
 1. Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
 2. Subfolders: 
+2.1. NtAuthorization: NtAuth.dll, NtAuthHR.dll
+2.2. UI0Detect: UI0Detect.exe, UI0Return.dll
+2.3. UI0Input: fdui0input.cat, FDUI0Input.inf, FDUI0Input.sys
+2.4. Utilities:
+2.4.1. Explorer: all files [Explorer++](https://github.com/derceg/explorerplusplus)
+2.4.2. ProcessHacker: all files of [Process Hacker](https://github.com/processhacker/processhacker)
+2.4.3. WinObjEx: all files of [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
