@@ -8,6 +8,8 @@ Access to protected objects of the operating system kernel.
 
 Management of processes and services of the operating system.
 
+Access to the terminal session (SessionId 0), Workstations and Desktops.
+
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
 ## System requirements
