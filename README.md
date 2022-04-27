@@ -27,6 +27,11 @@ Recommended to used Windows 10 or Windows 11.
 
 Requires Visual Studio (2019 or later).
 
-Execute `build_release.cmd` located in the `build` directory to compile the project or load the `ProcessHacker.sln` and `Plugins.sln` solutions if you prefer building the project using Visual Studio.
+Load the `KernelExplorer.sln`, `LdrModuleEx.sln`, `LdrModuleGUI.sln`, `NtAuth.sln`, `NtAuthHR.sln`, `RpcInterceptor.sln` and `UI0Return.sln` solutions if you prefer building the project using Visual Studio.
 
 You can download the free [Visual Studio Community](https://www.visualstudio.com/vs/community/) to build the KernelExplorer source code.
+
+After compilation place the executables in the following order:
+
+1. Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
+2. Subfolders: 
