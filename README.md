@@ -1,4 +1,4 @@
-<img align="left" src="https://raw.githubusercontent.com/LunarResearch/KernelExplorer/main/KernelExplorer/KernelExplorer/Fsociety.ico" width="128" height="128">
+<img align="left" src="https://raw.githubusercontent.com/LunarResearch/KernelExplorer/main/KernelExplorer/KernelExplorer/Fsociety.ico" width="256" height="256">
 
 ##  KernelExplorer
 
