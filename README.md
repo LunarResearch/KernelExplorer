@@ -34,11 +34,18 @@ You can download the free [Visual Studio Community](https://www.visualstudio.com
 After compilation place the executables in the following order:
 
 1. Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
-2. Subfolders: 
+2. Subfolders:
+
 2.1. NtAuthorization: NtAuth.dll, NtAuthHR.dll
+
 2.2. UI0Detect: UI0Detect.exe, UI0Return.dll
+
 2.3. UI0Input: fdui0input.cat, FDUI0Input.inf, FDUI0Input.sys
+
 2.4. Utilities:
+
 2.4.1. Explorer: all files [Explorer++](https://github.com/derceg/explorerplusplus)
+
 2.4.2. ProcessHacker: all files of [Process Hacker](https://github.com/processhacker/processhacker)
+
 2.4.3. WinObjEx: all files of [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
