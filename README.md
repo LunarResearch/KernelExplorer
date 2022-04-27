@@ -12,7 +12,9 @@ Switching Desktops & Sessions Utility
 
 Remote Processes Controlling using the Service Account Interceptor
 
-[Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
+## Downloading
+
+[Google Drive](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
 ## System requirements
 
