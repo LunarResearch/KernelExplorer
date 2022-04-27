@@ -4,9 +4,13 @@
 
 **Researching NT Kernel & System Objects (Win32 API)**
 
-Remote Processes Controlling using the Service Account Interceptor
+Interactive Services Detection
 
-Interactive Services Detection, Switching Desktops & Sessions Utility
+System Authorization Highest Rights
+
+Switching Desktops & Sessions Utility
+
+Remote Processes Controlling using the Service Account Interceptor
 
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
