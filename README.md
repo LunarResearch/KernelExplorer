@@ -1,6 +1,6 @@
 <img align="left" src="https://raw.githubusercontent.com/LunarResearch/KernelExplorer/main/KernelExplorer/KernelExplorer/Fsociety.ico" width="256" height="256">
 
-##  KernelExplorer
+#  KernelExplorer
 
 Researching NT Kernel & System Objects (Win32 API).
 
@@ -33,12 +33,12 @@ You can download the free [Visual Studio Community](https://www.visualstudio.com
 
 After compilation place the executables in the following order:
 
-1. Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
-2. Subfolders:
-3. NtAuthorization: NtAuth.dll, NtAuthHR.dll
-4. UI0Detect: UI0Detect.exe, UI0Return.dll
-5. UI0Input: fdui0input.cat, FDUI0Input.inf, FDUI0Input.sys
-6. Utilities:
-7. Explorer: all files [Explorer++](https://github.com/derceg/explorerplusplus)
-8. ProcessHacker: all files of [Process Hacker](https://github.com/processhacker/processhacker)
-9. WinObjEx: all files of [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
+1. ###Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
+2. **Subfolders**:
+3. **NtAuthorization**: NtAuth.dll, NtAuthHR.dll
+4. **UI0Detect**: UI0Detect.exe, UI0Return.dll
+5. **UI0Input**: fdui0input.cat, FDUI0Input.inf, FDUI0Input.sys
+6. **Utilities**:
+7. ***Explorer***: all files [Explorer++](https://github.com/derceg/explorerplusplus)
+8. ***ProcessHacker***: all files of [Process Hacker](https://github.com/processhacker/processhacker)
+9. ***WinObjEx***: all files of [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
