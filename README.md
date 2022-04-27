@@ -2,6 +2,6 @@
 
 ##  KernelExplorer
 
-A free tool that helps you monitor system resources.
+Researching NT Kernel & System Objects (Win32 API).
 
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
