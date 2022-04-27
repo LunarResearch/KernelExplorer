@@ -2,7 +2,7 @@
 
 ##  KernelExplorer
 
-Researching NT Kernel & System Objects (Win32 API).
+**Researching NT Kernel & System Objects (Win32 API).**
 
 Access to protected objects of the operating system kernel.
 
