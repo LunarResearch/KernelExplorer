@@ -32,7 +32,7 @@ Recommended to use with Windows 10 or Windows 11.
 
 ## Building the projects and using
 
-Requires Visual Studio (2019 or later).
+Requires Visual Studio (2022 or later).
 
 Load the `KernelExplorer.sln`, `LdrModuleEx.sln`, `LdrModuleGUI.sln`, `NtAuth.sln`, `NtAuthHR.sln`, `RpcInterceptor.sln` and `UI0Return.sln` solutions if you prefer building the project using Visual Studio.
 
