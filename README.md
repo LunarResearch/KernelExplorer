@@ -35,6 +35,7 @@ After compilation place the executables in the following order:
 
 1. Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
 2. Subfolders:
+2.1. NtAuthorization: NtAuth.dll, NtAuthHR.dll
 
 2.1. NtAuthorization: NtAuth.dll, NtAuthHR.dll
 
