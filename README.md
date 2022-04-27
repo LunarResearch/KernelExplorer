@@ -5,3 +5,7 @@
 Researching NT Kernel & System Objects (Win32 API).
 
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
+
+## System requirements
+
+Windows Vista or higher, only 64-bit.
