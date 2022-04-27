@@ -23,7 +23,7 @@ Recommended to use with Windows 10 or Windows 11.
 * 100% [Free Software](https://www.gnu.org/philosophy/free-sw.en.html) ([GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html))
 
 
-## Building the project and using
+## Building the projects and using
 
 Requires Visual Studio (2019 or later).
 
@@ -35,3 +35,5 @@ You can download the free [Visual Studio Community](https://www.visualstudio.com
 1. [Explorer++](https://github.com/derceg/explorerplusplus)
 2. [Process Hacker](https://github.com/processhacker/processhacker)
 3. [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
+
+*For correct operation, it is necessary to observe the structure of folders and subfolders.*
