@@ -4,4 +4,4 @@
 
 A free tool that helps you monitor system resources.
 
-[Project Downloads](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
+[Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
