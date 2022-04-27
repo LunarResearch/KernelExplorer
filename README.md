@@ -44,4 +44,5 @@ You can download the free [Visual Studio Community](https://www.visualstudio.com
 3. [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
 
 *For correct operation, it is necessary to observe the structure of folders and subfolders.*
+
 <img align="left" src="https://raw.githubusercontent.com/LunarResearch/KernelExplorer/main/folder_struct.png" width="284" height="170">
