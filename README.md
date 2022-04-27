@@ -3,12 +3,14 @@
 ##  KernelExplorer
 
 Researching NT Kernel & System Objects (Win32 API).
+Access to protected objects of the operating system kernel.
 
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
 ## System requirements
 
 Windows Vista or higher, only 64-bit.
+Recommended to used Windows 10 or Windows 11.
 
 ## Features
 
