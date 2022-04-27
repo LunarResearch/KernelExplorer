@@ -4,11 +4,11 @@
 
 **Researching NT Kernel & System Objects (Win32 API).**
 
-Access to protected objects of the operating system kernel.
 
-Management of processes and services of the operating system.
 
-Access to the terminal session (SessionId 0), Workstations and Desktops.
+
+
+
 
 [Project Download](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
@@ -19,6 +19,12 @@ Windows Vista or higher, only 64-bit.
 Recommended to use with Windows 10 or Windows 11.
 
 ## Features
+
+* Access to protected objects of the operating system kernel.
+
+* Management of processes and services of the operating system.
+
+* Access to the terminal session (SessionId 0), Workstations and Desktops.
 
 * 100% [Free Software](https://www.gnu.org/philosophy/free-sw.en.html) ([GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html))
 
