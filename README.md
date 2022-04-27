@@ -31,7 +31,7 @@ Load the `KernelExplorer.sln`, `LdrModuleEx.sln`, `LdrModuleGUI.sln`, `NtAuth.sl
 
 You can download the free [Visual Studio Community](https://www.visualstudio.com/vs/community/) to build the KernelExplorer source code.
 
-Additional utilities:
+### Additional utilities:
 1. [Explorer++](https://github.com/derceg/explorerplusplus)
 2. [Process Hacker](https://github.com/processhacker/processhacker)
 3. [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
