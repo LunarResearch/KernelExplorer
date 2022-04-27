@@ -16,7 +16,7 @@ Access to the terminal session (SessionId 0), Workstations and Desktops.
 
 Windows Vista or higher, only 64-bit.
 
-Recommended to used Windows 10 or Windows 11.
+Recommended to use with Windows 10 or Windows 11.
 
 ## Features
 
@@ -31,8 +31,7 @@ Load the `KernelExplorer.sln`, `LdrModuleEx.sln`, `LdrModuleGUI.sln`, `NtAuth.sl
 
 You can download the free [Visual Studio Community](https://www.visualstudio.com/vs/community/) to build the KernelExplorer source code.
 
-[Explorer++](https://github.com/derceg/explorerplusplus)
-
-[Process Hacker](https://github.com/processhacker/processhacker)
-
-[WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
+Additional utilities:
+1. [Explorer++](https://github.com/derceg/explorerplusplus)
+2. [Process Hacker](https://github.com/processhacker/processhacker)
+3. [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
