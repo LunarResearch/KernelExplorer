@@ -31,14 +31,8 @@ Load the `KernelExplorer.sln`, `LdrModuleEx.sln`, `LdrModuleGUI.sln`, `NtAuth.sl
 
 You can download the free [Visual Studio Community](https://www.visualstudio.com/vs/community/) to build the KernelExplorer source code.
 
-After compilation place the executables in the following order:
+[Explorer++](https://github.com/derceg/explorerplusplus)
 
-1. ###Main folder: KernelExplorer.exe, LdrModuleEx.dll, LdrModuleGUI.dll, RpcInterceptor.dll
-2. **Subfolders**:
-3. **NtAuthorization**: NtAuth.dll, NtAuthHR.dll
-4. **UI0Detect**: UI0Detect.exe, UI0Return.dll
-5. **UI0Input**: fdui0input.cat, FDUI0Input.inf, FDUI0Input.sys
-6. **Utilities**:
-7. ***Explorer***: all files [Explorer++](https://github.com/derceg/explorerplusplus)
-8. ***ProcessHacker***: all files of [Process Hacker](https://github.com/processhacker/processhacker)
-9. ***WinObjEx***: all files of [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
+[Process Hacker](https://github.com/processhacker/processhacker)
+
+[WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
