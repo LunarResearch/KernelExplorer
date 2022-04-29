@@ -18,6 +18,8 @@ Remote Processes Controlling using the Service Account Interceptor
 
 Please rename `KernelExplorer.exe_RenameMe` to `KernelExplorer.exe`, and `UI0Detect.exe_RenameMe` to `UI0Detect.exe`.
 
+Unzip the driver `kprocesshacker.7z` (fucking Google blocks the transfer of drivers through Google Drive).
+
 Microsoft's Independent Developer Policy is a hard method in [SmartScreen](https://habr.com/ru/post/505194/).
 
 The browser adds an NTFS-stream named [Zone.Identifier](https://docs.microsoft.com/en-us/archive/blogs/askcore/alternate-data-streams-in-ntfs) to the file, where it places a link from where the file was downloaded. SmartScreen swears at files with this NTFS stream.
