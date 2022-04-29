@@ -43,6 +43,7 @@ You can download the free [Visual Studio Community](https://www.visualstudio.com
 1. [Explorer++](https://github.com/derceg/explorerplusplus)
 2. [Process Hacker](https://github.com/processhacker/processhacker)
 3. [WinObjEx64](https://github.com/hfiref0x/WinObjEx64)
+4. [FireDaemon ZeroInput](https://kb.firedaemon.com/support/solutions/articles/4000123189)
 
 *For correct operation, it is necessary to observe the structure of folders and subfolders*
 
