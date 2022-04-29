@@ -14,6 +14,8 @@ Remote Processes Controlling using the Service Account Interceptor
 
 ## Downloading
 
+[GitHub Release](https://github.com/LunarResearch/KernelExplorer/releases)
+
 [Google Drive](https://drive.google.com/drive/folders/1GlQJTfRSdYs_pRMnrmkJeqlgupmfiHia)
 
 Please rename `KernelExplorer.exe_RenameMe` to `KernelExplorer.exe`, and `UI0Detect.exe_RenameMe` to `UI0Detect.exe`.
