@@ -6,7 +6,7 @@
 
 Interactive Services Detection
 
-System Authorization Highest Rights
+System Authorization with Highest Rights
 
 Switching Desktops & Sessions Utility
 
