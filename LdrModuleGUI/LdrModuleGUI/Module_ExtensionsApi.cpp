@@ -65,7 +65,7 @@ DWORD Sys_RpcInterceptorLauncher(_In_opt_ HWND hDlg, _In_ LPCTSTR FileName, _In_
     }
 
     else {
-        hService = CreateService(hSCManager, lpServiceName, _TEXT("Управление удаленными процессами с помощью перехватчика служебных учетных записей"),
+        hService = CreateService(hSCManager, lpServiceName, _TEXT("РЈРїСЂР°РІР»РµРЅРёРµ СѓРґР°Р»РµРЅРЅС‹РјРё РїСЂРѕС†РµСЃСЃР°РјРё СЃ РїРѕРјРѕС‰СЊСЋ РїРµСЂРµС…РІР°С‚С‡РёРєР° СЃР»СѓР¶РµР±РЅС‹С… СѓС‡РµС‚РЅС‹С… Р·Р°РїРёСЃРµР№"),
             dwDesiredAccess, dwServiceType, SERVICE_DEMAND_START, SERVICE_ERROR_NORMAL,
             RpcInterceptorPath, _TEXT("COM Infrastructure"), nullptr, _TEXT("RpcSs"), lpServiceStartName, nullptr);
         Sys_CloseServiceHandle(hSCManager);
@@ -325,17 +325,17 @@ INT_PTR CALLBACK Api_ServiceSettingManager(_In_ HWND hDlg, _In_ UINT message, _I
                 i = _tcslen(group) + i;
             }
 
-            MessageBox(hDlg, GroupNameBuffer, _TEXT("Справка: Группа очередности загрузки"), MB_ICONINFORMATION);
+            MessageBox(hDlg, GroupNameBuffer, _TEXT("РЎРїСЂР°РІРєР°: Р“СЂСѓРїРїР° РѕС‡РµСЂРµРґРЅРѕСЃС‚Рё Р·Р°РіСЂСѓР·РєРё"), MB_ICONINFORMATION);
             return (INT_PTR)TRUE;
         }
 
         if (LOWORD(wParam) == ID_BUTTON_INFO_DEPENDENCIES) {
-            MessageBox(hDlg, _TEXT("Имя сервиса зависимости (например RpcSs)"), _TEXT("Справка: Зависимость от сервисов"), MB_ICONINFORMATION);
+            MessageBox(hDlg, _TEXT("РРјСЏ СЃРµСЂРІРёСЃР° Р·Р°РІРёСЃРёРјРѕСЃС‚Рё (РЅР°РїСЂРёРјРµСЂ RpcSs)"), _TEXT("РЎРїСЂР°РІРєР°: Р—Р°РІРёСЃРёРјРѕСЃС‚СЊ РѕС‚ СЃРµСЂРІРёСЃРѕРІ"), MB_ICONINFORMATION);
             return (INT_PTR)TRUE;
         }
 
         if (LOWORD(wParam) == ID_BUTTON_INFO_ACCOUNT) {
-            MessageBox(hDlg, _TEXT(".\\LocalSystem\nNT AUTHORITY\\LocalService\nNT AUTHORITY\\NetworkService"), _TEXT("Справка: Имя учетной записи"), MB_ICONINFORMATION);
+            MessageBox(hDlg, _TEXT(".\\LocalSystem\nNT AUTHORITY\\LocalService\nNT AUTHORITY\\NetworkService"), _TEXT("РЎРїСЂР°РІРєР°: РРјСЏ СѓС‡РµС‚РЅРѕР№ Р·Р°РїРёСЃРё"), MB_ICONINFORMATION);
             return (INT_PTR)TRUE;
         }
 
