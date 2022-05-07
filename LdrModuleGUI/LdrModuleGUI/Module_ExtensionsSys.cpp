@@ -9,10 +9,10 @@ DWORD ErrPrint(_In_opt_ HWND hWndParent, _In_ LPCTSTR FooMsg)
 	_TCHAR msgBuffer[MAX_PATH]{}, strBuffer[MAX_PATH]{}, dwBuffer[MAX_PATH]{};
 
 	if(ERROR_INVALID_IMAGE_HASH == GetLastError())
-		MessageBox(hWndParent, _TEXT("Системе Windows не удается проверить цифровую подпись этого файла. При последнем изменении оборудования или программного обеспечения могла быть произведена установка неправильно подписанного или поврежденного файла либо вредоносной программы неизвестного происхождения."), _TEXT("KernelExplorer"), MB_ICONERROR);
+		MessageBox(hWndParent, _TEXT("РЎРёСЃС‚РµРјРµ Windows РЅРµ СѓРґР°РµС‚СЃСЏ РїСЂРѕРІРµСЂРёС‚СЊ С†РёС„СЂРѕРІСѓСЋ РїРѕРґРїРёСЃСЊ СЌС‚РѕРіРѕ С„Р°Р№Р»Р°. РџСЂРё РїРѕСЃР»РµРґРЅРµРј РёР·РјРµРЅРµРЅРёРё РѕР±РѕСЂСѓРґРѕРІР°РЅРёСЏ РёР»Рё РїСЂРѕРіСЂР°РјРјРЅРѕРіРѕ РѕР±РµСЃРїРµС‡РµРЅРёСЏ РјРѕРіР»Р° Р±С‹С‚СЊ РїСЂРѕРёР·РІРµРґРµРЅР° СѓСЃС‚Р°РЅРѕРІРєР° РЅРµРїСЂР°РІРёР»СЊРЅРѕ РїРѕРґРїРёСЃР°РЅРЅРѕРіРѕ РёР»Рё РїРѕРІСЂРµР¶РґРµРЅРЅРѕРіРѕ С„Р°Р№Р»Р° Р»РёР±Рѕ РІСЂРµРґРѕРЅРѕСЃРЅРѕР№ РїСЂРѕРіСЂР°РјРјС‹ РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ РїСЂРѕРёСЃС…РѕР¶РґРµРЅРёСЏ."), _TEXT("KernelExplorer"), MB_ICONERROR);
 	else {
 		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), strBuffer, 260, nullptr);
-		_stprintf_s(msgBuffer, _TEXT("%s\nКод %s: %s"), FooMsg, _ultot(GetLastError(), dwBuffer, 10), strBuffer);
+		_stprintf_s(msgBuffer, _TEXT("%s\nГЉГ®Г¤ %s: %s"), FooMsg, _ultot(GetLastError(), dwBuffer, 10), strBuffer);
 		MessageBox(hWndParent, msgBuffer, _TEXT("KernelExplorer"), MB_ICONERROR);
 	}
 
@@ -133,7 +133,7 @@ DWORD Sys_TerminateProcess(_In_ DWORD dwProcessId)
 	switch (dwExitCode)
 	{
 	case ERROR_NO_MORE_ITEMS:
-		MessageBox(nullptr, _TEXT("NO_MORE_ITEMS: у объекта больше нет каких-либо данных."), _TEXT("KernelExplorer"), MB_ICONINFORMATION); break;
+		MessageBox(nullptr, _TEXT("NO_MORE_ITEMS: Гі Г®ГЎГєГҐГЄГІГ  ГЎГ®Г«ГјГёГҐ Г­ГҐГІ ГЄГ ГЄГЁГµ-Г«ГЁГЎГ® Г¤Г Г­Г­Г»Гµ."), _TEXT("KernelExplorer"), MB_ICONINFORMATION); break;
 	default:
 		_TCHAR Buffer[MAX_PATH]{};
 		MessageBox(nullptr, _ultot(dwExitCode, Buffer, 10), _TEXT("KernelExplorer"), MB_ICONERROR); break;
@@ -253,7 +253,7 @@ DWORD Sys_SwitchToServicesSession(_In_ DWORD dwWindowStationNameId)
 			}
 		}
 		else {
-			MessageBox(nullptr, _TEXT("Драйвер FDUI0Input.sys не установлен.\nВ главном меню выберите Дополнительно - Установить INF драйвер, в папке UI0Input найдите файл FDUI0Input.inf\nПосле установки драйвера перезагрузите компьютер."), _TEXT("KernelExplorer"), MB_ICONSTOP);
+			MessageBox(nullptr, _TEXT("Г„Г°Г Г©ГўГҐГ° FDUI0Input.sys Г­ГҐ ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­.\nГ‚ ГЈГ«Г ГўГ­Г®Г¬ Г¬ГҐГ­Гѕ ГўГ»ГЎГҐГ°ГЁГІГҐ Г„Г®ГЇГ®Г«Г­ГЁГІГҐГ«ГјГ­Г® - Г“Г±ГІГ Г­Г®ГўГЁГІГј INF Г¤Г°Г Г©ГўГҐГ°, Гў ГЇГ ГЇГЄГҐ UI0Input Г­Г Г©Г¤ГЁГІГҐ ГґГ Г©Г« FDUI0Input.inf\nГЏГ®Г±Г«ГҐ ГіГ±ГІГ Г­Г®ГўГЄГЁ Г¤Г°Г Г©ГўГҐГ°Г  ГЇГҐГ°ГҐГ§Г ГЈГ°ГіГ§ГЁГІГҐ ГЄГ®Г¬ГЇГјГѕГІГҐГ°."), _TEXT("KernelExplorer"), MB_ICONSTOP);
 			return EXIT_FAILURE;
 		}
 		Sys_CloseServiceHandle(hService);
@@ -272,7 +272,7 @@ DWORD Sys_SwitchToServicesSessionEx(_In_opt_ HWND hWnd, _In_ LPCTSTR WinStaName,
 	_TCHAR tmpDir[MAX_PATH]{}, RpcInterceptorPath[MAX_PATH]{};
 	SC_HANDLE hService = nullptr;
 
-	if (MessageBox(hWnd, Sys_MsgText(WinStaName), _TEXT("Внимание"), MB_YESNO | MB_ICONWARNING) == IDYES) {
+	if (MessageBox(hWnd, Sys_MsgText(WinStaName), _TEXT("Г‚Г­ГЁГ¬Г Г­ГЁГҐ"), MB_YESNO | MB_ICONWARNING) == IDYES) {
 		_stprintf_s(tmpDir, _TEXT("%s\\Documents\\UI0Return.dll"), _tgetenv(_TEXT("PUBLIC")));
 		CopyFile(_TEXT("UI0Detect\\UI0Return.dll"), tmpDir, FALSE);
 		Sys_RpcInterceptorLauncher(hWnd, tmpDir, lpServiceName, dwDesiredAccess, dwServiceType, lpServiceStartName, pRequiredPrivileges);
@@ -330,8 +330,8 @@ DWORD Sys_SwitchDesktop(_In_ DWORD dwDesktopNameId)
 _TCHAR Buffer[MAX_PATH]{};
 LPCTSTR Sys_MsgText(_In_ LPCTSTR WinStaName)
 {
-	LPCTSTR String_1 = _TEXT("Рабочая станция"),
-		String_3 = _TEXT("является\nне интерактивной. Оконные процедуры не имеют возможности быть отображены.\nВозврат в пользовательское окружение будет осуществлен автоматически спустя 10 секунд после перехода.\nПродолжить?");
+	LPCTSTR String_1 = _TEXT("ГђГ ГЎГ®Г·Г Гї Г±ГІГ Г­Г¶ГЁГї"),
+		String_3 = _TEXT("ГїГўГ«ГїГҐГІГ±Гї\nГ­ГҐ ГЁГ­ГІГҐГ°Г ГЄГІГЁГўГ­Г®Г©. ГЋГЄГ®Г­Г­Г»ГҐ ГЇГ°Г®Г¶ГҐГ¤ГіГ°Г» Г­ГҐ ГЁГ¬ГҐГѕГІ ГўГ®Г§Г¬Г®Г¦Г­Г®Г±ГІГЁ ГЎГ»ГІГј Г®ГІГ®ГЎГ°Г Г¦ГҐГ­Г».\nГ‚Г®Г§ГўГ°Г ГІ Гў ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГјГ±ГЄГ®ГҐ Г®ГЄГ°ГіГ¦ГҐГ­ГЁГҐ ГЎГіГ¤ГҐГІ Г®Г±ГіГ№ГҐГ±ГІГўГ«ГҐГ­ Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ Г±ГЇГіГ±ГІГї 10 Г±ГҐГЄГіГ­Г¤ ГЇГ®Г±Г«ГҐ ГЇГҐГ°ГҐГµГ®Г¤Г .\nГЏГ°Г®Г¤Г®Г«Г¦ГЁГІГј?");
 	_stprintf_s(Buffer, _TEXT("%s %s %s"), String_1, WinStaName, String_3);
 	return Buffer;
 }
@@ -372,43 +372,43 @@ DWORD Sys_Updater(_In_opt_ HWND hWnd, _In_ int nCmdShow)
 			DeleteFile(_TEXT("KernelExplorer.exe"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1qRxz_AZEBnFFz5hcz0DHZT7JncwTiNiS"), _TEXT("KernelExplorer.exe_RenameMe"), NULL, nullptr);
 			if (_trename(_TEXT("KernelExplorer.exe_RenameMe"), _TEXT("KernelExplorer.exe")) != NO_ERROR) return ErrPrint(hWnd, _TEXT("Sys_Updater::_trename"));
-			MessageBox(hWnd, _TEXT("Модуль KernelExplorer.exe успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј KernelExplorer.exe ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[1] != IdxNewVersion[1]) {
 			DeleteFile(_TEXT("NtAuthorization\\NtAuth.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1rAPjviAWBLF37MeETJquKMr-mKhCJjgP"), _TEXT("NtAuthorization\\NtAuth.dll"), NULL, nullptr);
-			MessageBox(hWnd, _TEXT("Модуль NtAuth.dll успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј NtAuth.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[2] != IdxNewVersion[2]) {
 			DeleteFile(_TEXT("NtAuthorization\\NtAuthHR.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1ensuNBIY_Cg1uVQVNQ5Ice0RAHBMHpfD"), _TEXT("NtAuthorization\\NtAuthHR.dll"), NULL, nullptr);
-			MessageBox(hWnd, _TEXT("Модуль NtAuthHR.dll успешно обновлен"), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј NtAuthHR.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­"), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[4] != IdxNewVersion[4]) {
 			Sys_DeleteFile(_TEXT("LdrModuleEx.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1bA-79ZYfyAQW7Sk5CqL61PRbjaGPW34w"), _TEXT("LdrModuleEx.dll"), NULL, nullptr);
-			MessageBox(hWnd, _TEXT("Модуль LdrModuleEx.dll успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј LdrModuleEx.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[5] != IdxNewVersion[5]) {
 			DeleteFile(_TEXT("UI0Detect\\UI0Detect.exe"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1dc5cwBtitM4O7fAcg1xIWknlbGGMWYcQ"), _TEXT("UI0Detect\\UI0Detect.exe_RenameMe"), NULL, nullptr);
 			if (_trename(_TEXT("UI0Detect\\UI0Detect.exe_RenameMe"), _TEXT("UI0Detect\\UI0Detect.exe")) != NO_ERROR) return ErrPrint(hWnd, _TEXT("Sys_Updater::_trename"));
-			MessageBox(hWnd, _TEXT("Модуль UI0Detect.exe успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј UI0Detect.exe ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[6] != IdxNewVersion[6]) {
 			Sys_DeleteFile(_TEXT("UI0Detect\\UI0Return.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=1si5gPJg7OKux3aa3GUygbxctnK0Cx_N5"), _TEXT("UI0Detect\\UI0Return.dll"), NULL, nullptr);
-			MessageBox(hWnd, _TEXT("Модуль UI0Return.dll успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј UI0Return.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[7] != IdxNewVersion[7]) {
 			DeleteFile(_TEXT("RpcInterceptor.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=192u6TlFR9iRwEkN6HTC_42v9eP9NyihH"), _TEXT("RpcInterceptor.dll"), NULL, nullptr);
-			MessageBox(hWnd, _TEXT("Модуль RpcInterceptor.dll успешно обновлен."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј RpcInterceptor.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 		}
 		if (IdxCurrentVersion[3] != IdxNewVersion[3]) {
 			Sys_DeleteFile(_TEXT("LdrModuleGUI.dll"));
 			URLDownloadToFile(nullptr, _TEXT("https://drive.google.com/uc?export=download&id=194T7FMxQR0R1Cu7LJcj-jzSQ64qzr3gf"), _TEXT("LdrModuleGUI.dll"), NULL, nullptr);
-			if (MessageBox(hWnd, _TEXT("Модуль LdrModuleGUI.dll успешно обновлен.\nПерезапустить программу?"), _TEXT("KernelExplorer"), MB_YESNO | MB_ICONINFORMATION) == IDYES) {
+			if (MessageBox(hWnd, _TEXT("ГЊГ®Г¤ГіГ«Гј LdrModuleGUI.dll ГіГ±ГЇГҐГёГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­.\nГЏГҐГ°ГҐГ§Г ГЇГіГ±ГІГЁГІГј ГЇГ°Г®ГЈГ°Г Г¬Г¬Гі?"), _TEXT("KernelExplorer"), MB_YESNO | MB_ICONINFORMATION) == IDYES) {
 #pragma warning(suppress: 28159)
 				WinExec("\"LdrModuleGUI.dll\"", nCmdShow);
 				Sys_TerminateProcess(GetCurrentProcessId());
@@ -417,7 +417,7 @@ DWORD Sys_Updater(_In_opt_ HWND hWnd, _In_ int nCmdShow)
 		if (IdxCurrentVersion[0] == IdxNewVersion[0] && IdxCurrentVersion[1] == IdxNewVersion[1] && IdxCurrentVersion[2] == IdxNewVersion[2] &&
 			IdxCurrentVersion[3] == IdxNewVersion[3] && IdxCurrentVersion[4] == IdxNewVersion[4] && IdxCurrentVersion[5] == IdxNewVersion[5] &&
 			IdxCurrentVersion[6] == IdxNewVersion[6] && IdxCurrentVersion[7] == IdxNewVersion[7])
-			MessageBox(hWnd, _TEXT("Все модули обновлены до последних версий."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
+			MessageBox(hWnd, _TEXT("Г‚Г±ГҐ Г¬Г®Г¤ГіГ«ГЁ Г®ГЎГ­Г®ГўГ«ГҐГ­Г» Г¤Г® ГЇГ®Г±Г«ГҐГ¤Г­ГЁГµ ГўГҐГ°Г±ГЁГ©."), _TEXT("KernelExplorer"), MB_ICONINFORMATION);
 	}
 	else {
 		InetErrPrint(Version);
