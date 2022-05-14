@@ -14,8 +14,8 @@ int _tmain(VOID)
 	_TCHAR FileName[MAX_PATH]{};
 	LONG dwProcessId = NULL;
 	DWORD dwThreadId = NULL;
-	HANDLE hProcess = nullptr, hThread = nullptr, hProcessToken = nullptr;
-	PSECURITY_DESCRIPTOR ppProcessSecurityDescriptor = nullptr, ppThreadSecurityDescriptor = nullptr;
+	HANDLE hProcess = nullptr, hThread = nullptr;
+	PSECURITY_DESCRIPTOR ppProcessSecurityDescriptor = nullptr, ppThreadSecurityDescriptor = nullptr, ppServiceSecurityDescriptor = nullptr;
 
 	setlocale(LC_ALL, "Russian");
 
@@ -23,7 +23,7 @@ Commands:
 	_tout << _TEXT("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\") <<
 		_TEXT("\n\\\\   "); Sys_SetTextColor(GREEN); _tout << _TEXT("-=WORKING WITH PROCESSES=-"); Sys_SetTextColor(FLUSH); _tout << _TEXT("   \\\\") <<
 		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("lp"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - ListProcess            \\\\") <<
-		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("op"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - OpenProcess            \\\\") <<
+		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("ob"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - OpenObject             \\\\") <<
 		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("dp"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - DebugProcess           \\\\") <<
 		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("tp"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - TerminateProcess       \\\\") <<
 		_TEXT("\n\\\\    "); Sys_SetTextColor(YELLOW_INTENSITY); _tout << _TEXT("zp"); Sys_SetTextColor(FLUSH); _tout << _TEXT(" - ZombieProcess          \\\\") <<
@@ -79,15 +79,14 @@ Input:
 
 
 	/// <summary>
-	/// OpenProcess
+	/// OpenObject
 	/// </summary>
-	else if (_tcscmp(_TEXT("op"), CommandPrompt) == 0) {
-		_TCHAR ProcessNameOrProcessId[MAX_PATH]{};
-		_tout << _TEXT("Enter process name or process identifier: ");
-		_tin >> ProcessNameOrProcessId;
+	else if (_tcscmp(_TEXT("ob"), CommandPrompt) == 0) {
+		_TCHAR ObjectNameOrObjectId[MAX_PATH]{};
+		_tout << _TEXT("Enter object name or object identifier: ");
+		_tin >> ObjectNameOrObjectId;
 		_tin.get();
-		hProcess = Sys_OpenProcess(ProcessNameOrProcessId, &hThread, &ppProcessSecurityDescriptor, &ppThreadSecurityDescriptor);
-		hProcessToken = Sys_GetProcessTokenInformation(hProcess);
+		hProcess = Sys_QueryObjectSecurity(ObjectNameOrObjectId, &hThread, &ppProcessSecurityDescriptor, &ppThreadSecurityDescriptor, &ppServiceSecurityDescriptor);
 		goto Input;
 	}
 
@@ -139,8 +138,8 @@ Input:
 		Sys_SetTextColor(WHITE); _tout << _TEXT("\n    1 - DISABLED\n    2 - ENABLED\n    3 - REMOVED\n"); Sys_SetTextColor(FLUSH); _tout << _TEXT("Choose operation mode: ");
 		_tin >> NumPrivOperation;
 		_tin.get();
-		if (hProcessToken)
-			Sys_SetProcessTokenInformation(hProcessToken, PrivilegeName, NumPrivOperation);
+		if (::g_hProcessToken)
+			Sys_SetProcessTokenInformation(::g_hProcessToken, PrivilegeName, NumPrivOperation);
 		goto Input;
 	}
 
@@ -282,30 +281,30 @@ Input:
 	/// GetHelpProgram
 	/// </summary>
 	else if (_tcscmp(_TEXT("help"), CommandPrompt) == 0) {
-		_tout << _TEXT("KernelExplorer - ýòî êîìïëåêñ ïðîãðàììíûõ ñðåäñòâ äëÿ èññëåäîâàíèÿ ðàçëè÷íûõ òèïîâ îáúåêòà ÿäðà.\n"
-			"Ïîääåðæèâàåìûå îïåðàöèîííûå ñèñòåìû: Windows Vista, Windows 7, Windows 8, Windows 8.1, Windows 10, Windows 11 (òîëüêî 64 áèòíûå âåðñèè ÎÑ).\n"
-			"Äëÿ àêòèâàöèè ìåõàíèçìà ïîâûøåíèÿ ïðèâèëåãèé äî óðîâíÿ ó÷åòíîé çàïèñè ÑÈÑÒÅÌÀ òðåáóåòñÿ çàïóñê îò èìåíè àäìèíèñòðàòîðà.\n"
-			"Âçàèìîäåéñòâèå ïðîãðàììû ñ ïîëüçîâàòåëåì ïðîèñõîäèò ñèëàìè Command Line Interpreter.\n"
-			"Âñå êîìàíäû è ââîäèìûå ïîëüçîâàòåëåì äàííûå âûïîëíÿþòñÿ ïîñëå íàæàòèÿ êëàâèøè Enter.\n\n"
-			"Äëÿ ïåðåõîäà â ñåññèþ 0 ñðåäñòâàìè ñåðâèñà UI0Detect â Windows 10 îáÿçàòåëüíî óñòàíîâèòå äðàéâåð 'FDUI0Input.sys' è ïåðåçàãðóçèòå êîìïüþòåð.\n\n"
-			"Êîìàíäû:\nAlt + Enter - ñâåðíóòü\\ðàçâåðíóòü îêíî êîíñîëè íà âåñü ýêðàí\n"
-			"lp - âûâîä ñïèñêà âñåõ çàïóùåííûõ ïðîöåññîâ\n"
-			"op - âûâîä èíôîðìàöèè î ïðîöåññå, çàäàííîãî ÷åðåç åãî èìÿ èëè èäåíòèôèêàòîð\n"
-			"dp - îòëàäêà ïðîöåññà (ôóíêöèîíàë åù¸ íå ðåàëèçîâàí)\n"
-			"tp - çàâåðøåíèå ïðîöåññà, çàäàííîãî ÷åðåç åãî èäåíòèôèêàòîð\n"
-			"zp - ïîèñê Zombie Process\n"
-			"token - âêëþ÷åíèå\\îòêëþ÷åíèå\\óäàëåíèå ïðèâèëåãèé òîêåíà ïðîöåññà (ñíà÷àëà âûïîëíèòå êîìàíäó 'op' çàòåì èçìåíèòå íåîáõîäèìóþ ïðèâèëåãèþ)\n"
-			"ls - âûâîä ñïèñêà âñåõ ïðèñóòñòâóþùèõ ñåðâèñîâ â ñèñòåìå\n"
-			"os - âûâîä èíôîðìàöèè î ñåðâèñå, çàäàííîãî ÷åðåç åãî èìÿ\n"
-			"ss - çàïóñê\\îñòàíîâêà ñåðâèñà, çàäàííîãî ÷åðåç åãî èìÿ\n"
-			"ds - óäàëåíèå ñåðâèñà, çàäàííîãî ÷åðåç åãî èìÿ (óäàëåíèå ñåðâèñà ÿâëÿåòñÿ ôàòàëüíûì, ïåðåçàãðóçêà êîìïüþòåðà åãî íå ïåðåñîçäàñò)\n"
-			"prot - ñíÿòèå\\óñòàíîâêà\\èçìåíåíèå çàùèòû ñåðâèñíîé ñëóæáû\n"
-			"of - îòêðûòèå ôàéëà äëÿ èññëåäîâàíèÿ PE ôîðìàòà (ïîëíûé ôóíêöèîíàë åù¸ íå ðåàëèçîâàí)\n"
-			"df - óäàëåíèå îòêðûòîãî\\çàáëîêèðîâàííîãî ôàéëà (óäàëåíèå ôàéëà íå çàâåðøàåò åãî ðîäèòåëüñêèé ïðîöåññ)\n"
-			"utl - áûñòðûé çàïóñê äîïîëíèòåëüíûõ ïðîãðàììíûõ ñðåäñòâ\n"
-			"cls - î÷èñòèòü ýêðàí êîíñîëè\n"
-			"exit - âûõîä èç ïðîãðàììû (íàñòîÿòåëüíî ðåêîìåíäóåòñÿ çàâåðøàòü ðàáîòó ÷åðåç êîìàíäó 'exit' äëÿ êîððåêòíîãî çàêðûòèÿ îòêðûòûõ äåñêðèïòîðîâ)\n"
-			"help - âûçîâ ñïðàâêè î ïðîãðàììå\n");
+		_tout << _TEXT("KernelExplorer - ÑÑ‚Ð¾ ÐºÐ¾Ð¼Ð¿Ð»ÐµÐºÑ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð½Ñ‹Ñ… ÑÑ€ÐµÐ´ÑÑ‚Ð² Ð´Ð»Ñ Ð¸ÑÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ Ñ€Ð°Ð·Ð»Ð¸Ñ‡Ð½Ñ‹Ñ… Ñ‚Ð¸Ð¿Ð¾Ð² Ð¾Ð±ÑŠÐµÐºÑ‚Ð° ÑÐ´Ñ€Ð°.\n"
+			"ÐŸÐ¾Ð´Ð´ÐµÑ€Ð¶Ð¸Ð²Ð°ÐµÐ¼Ñ‹Ðµ Ð¾Ð¿ÐµÑ€Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ðµ ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹: Windows Vista, Windows 7, Windows 8, Windows 8.1, Windows 10, Windows 11 (Ñ‚Ð¾Ð»ÑŒÐºÐ¾ 64 Ð±Ð¸Ñ‚Ð½Ñ‹Ðµ Ð²ÐµÑ€ÑÐ¸Ð¸ ÐžÐ¡).\n"
+			"Ð”Ð»Ñ Ð°ÐºÑ‚Ð¸Ð²Ð°Ñ†Ð¸Ð¸ Ð¼ÐµÑ…Ð°Ð½Ð¸Ð·Ð¼Ð° Ð¿Ð¾Ð²Ñ‹ÑˆÐµÐ½Ð¸Ñ Ð¿Ñ€Ð¸Ð²Ð¸Ð»ÐµÐ³Ð¸Ð¹ Ð´Ð¾ ÑƒÑ€Ð¾Ð²Ð½Ñ ÑƒÑ‡ÐµÑ‚Ð½Ð¾Ð¹ Ð·Ð°Ð¿Ð¸ÑÐ¸ Ð¡Ð˜Ð¡Ð¢Ð•ÐœÐ Ñ‚Ñ€ÐµÐ±ÑƒÐµÑ‚ÑÑ Ð·Ð°Ð¿ÑƒÑÐº Ð¾Ñ‚ Ð¸Ð¼ÐµÐ½Ð¸ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð°.\n"
+			"Ð’Ð·Ð°Ð¸Ð¼Ð¾Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼ Ð¿Ñ€Ð¾Ð¸ÑÑ…Ð¾Ð´Ð¸Ñ‚ ÑÐ¸Ð»Ð°Ð¼Ð¸ Command Line Interpreter.\n"
+			"Ð’ÑÐµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ Ð¸ Ð²Ð²Ð¾Ð´Ð¸Ð¼Ñ‹Ðµ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÑÑŽÑ‚ÑÑ Ð¿Ð¾ÑÐ»Ðµ Ð½Ð°Ð¶Ð°Ñ‚Ð¸Ñ ÐºÐ»Ð°Ð²Ð¸ÑˆÐ¸ Enter.\n\n"
+			"Ð”Ð»Ñ Ð¿ÐµÑ€ÐµÑ…Ð¾Ð´Ð° Ð² ÑÐµÑÑÐ¸ÑŽ 0 ÑÑ€ÐµÐ´ÑÑ‚Ð²Ð°Ð¼Ð¸ ÑÐµÑ€Ð²Ð¸ÑÐ° UI0Detect Ð² Windows 10 Ð¾Ð±ÑÐ·Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚Ðµ Ð´Ñ€Ð°Ð¹Ð²ÐµÑ€ 'FDUI0Input.sys' Ð¸ Ð¿ÐµÑ€ÐµÐ·Ð°Ð³Ñ€ÑƒÐ·Ð¸Ñ‚Ðµ ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€.\n\n"
+			"ÐšÐ¾Ð¼Ð°Ð½Ð´Ñ‹:\nAlt + Enter - ÑÐ²ÐµÑ€Ð½ÑƒÑ‚ÑŒ\\Ñ€Ð°Ð·Ð²ÐµÑ€Ð½ÑƒÑ‚ÑŒ Ð¾ÐºÐ½Ð¾ ÐºÐ¾Ð½ÑÐ¾Ð»Ð¸ Ð½Ð° Ð²ÐµÑÑŒ ÑÐºÑ€Ð°Ð½\n"
+			"lp - Ð²Ñ‹Ð²Ð¾Ð´ ÑÐ¿Ð¸ÑÐºÐ° Ð²ÑÐµÑ… Ð·Ð°Ð¿ÑƒÑ‰ÐµÐ½Ð½Ñ‹Ñ… Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ¾Ð²\n"
+			"ob - Ð²Ñ‹Ð²Ð¾Ð´ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸ Ð¾Ð± Ð¾Ð±ÑŠÐµÐºÑ‚Ðµ, Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‡ÐµÑ€ÐµÐ· ÐµÐ³Ð¾ Ð¸Ð¼Ñ Ð¸Ð»Ð¸ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€\n"
+			"dp - Ð¾Ñ‚Ð»Ð°Ð´ÐºÐ° Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ° (Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¾Ð½Ð°Ð» ÐµÑ‰Ñ‘ Ð½Ðµ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð¾Ð²Ð°Ð½)\n"
+			"tp - Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¸Ðµ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°, Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‡ÐµÑ€ÐµÐ· ÐµÐ³Ð¾ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€\n"
+			"zp - Ð¿Ð¾Ð¸ÑÐº Zombie Process\n"
+			"token - Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ\\Ð¾Ñ‚ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ\\ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¿Ñ€Ð¸Ð²Ð¸Ð»ÐµÐ³Ð¸Ð¹ Ñ‚Ð¾ÐºÐµÐ½Ð° Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ° (ÑÐ½Ð°Ñ‡Ð°Ð»Ð° Ð²Ñ‹Ð¿Ð¾Ð»Ð½Ð¸Ñ‚Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ 'op' Ð·Ð°Ñ‚ÐµÐ¼ Ð¸Ð·Ð¼ÐµÐ½Ð¸Ñ‚Ðµ Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼ÑƒÑŽ Ð¿Ñ€Ð¸Ð²Ð¸Ð»ÐµÐ³Ð¸ÑŽ)\n"
+			"ls - Ð²Ñ‹Ð²Ð¾Ð´ ÑÐ¿Ð¸ÑÐºÐ° Ð²ÑÐµÑ… Ð¿Ñ€Ð¸ÑÑƒÑ‚ÑÑ‚Ð²ÑƒÑŽÑ‰Ð¸Ñ… ÑÐµÑ€Ð²Ð¸ÑÐ¾Ð² Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ\n"
+			"os - Ð²Ñ‹Ð²Ð¾Ð´ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸ Ð¾ ÑÐµÑ€Ð²Ð¸ÑÐµ, Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‡ÐµÑ€ÐµÐ· ÐµÐ³Ð¾ Ð¸Ð¼Ñ\n"
+			"ss - Ð·Ð°Ð¿ÑƒÑÐº\\Ð¾ÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° ÑÐµÑ€Ð²Ð¸ÑÐ°, Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‡ÐµÑ€ÐµÐ· ÐµÐ³Ð¾ Ð¸Ð¼Ñ\n"
+			"ds - ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ ÑÐµÑ€Ð²Ð¸ÑÐ°, Ð·Ð°Ð´Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ‡ÐµÑ€ÐµÐ· ÐµÐ³Ð¾ Ð¸Ð¼Ñ (ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ ÑÐµÑ€Ð²Ð¸ÑÐ° ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ñ„Ð°Ñ‚Ð°Ð»ÑŒÐ½Ñ‹Ð¼, Ð¿ÐµÑ€ÐµÐ·Ð°Ð³Ñ€ÑƒÐ·ÐºÐ° ÐºÐ¾Ð¼Ð¿ÑŒÑŽÑ‚ÐµÑ€Ð° ÐµÐ³Ð¾ Ð½Ðµ Ð¿ÐµÑ€ÐµÑÐ¾Ð·Ð´Ð°ÑÑ‚)\n"
+			"prot - ÑÐ½ÑÑ‚Ð¸Ðµ\\ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ°\\Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ Ð·Ð°Ñ‰Ð¸Ñ‚Ñ‹ ÑÐµÑ€Ð²Ð¸ÑÐ½Ð¾Ð¹ ÑÐ»ÑƒÐ¶Ð±Ñ‹\n"
+			"of - Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ Ñ„Ð°Ð¹Ð»Ð° Ð´Ð»Ñ Ð¸ÑÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ PE Ñ„Ð¾Ñ€Ð¼Ð°Ñ‚Ð° (Ð¿Ð¾Ð»Ð½Ñ‹Ð¹ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¾Ð½Ð°Ð» ÐµÑ‰Ñ‘ Ð½Ðµ Ñ€ÐµÐ°Ð»Ð¸Ð·Ð¾Ð²Ð°Ð½)\n"
+			"df - ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ð¾Ð³Ð¾\\Ð·Ð°Ð±Ð»Ð¾ÐºÐ¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ð¾Ð³Ð¾ Ñ„Ð°Ð¹Ð»Ð° (ÑƒÐ´Ð°Ð»ÐµÐ½Ð¸Ðµ Ñ„Ð°Ð¹Ð»Ð° Ð½Ðµ Ð·Ð°Ð²ÐµÑ€ÑˆÐ°ÐµÑ‚ ÐµÐ³Ð¾ Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÑŒÑÐºÐ¸Ð¹ Ð¿Ñ€Ð¾Ñ†ÐµÑÑ)\n"
+			"utl - Ð±Ñ‹ÑÑ‚Ñ€Ñ‹Ð¹ Ð·Ð°Ð¿ÑƒÑÐº Ð´Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ñ… Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð½Ñ‹Ñ… ÑÑ€ÐµÐ´ÑÑ‚Ð²\n"
+			"cls - Ð¾Ñ‡Ð¸ÑÑ‚Ð¸Ñ‚ÑŒ ÑÐºÑ€Ð°Ð½ ÐºÐ¾Ð½ÑÐ¾Ð»Ð¸\n"
+			"exit - Ð²Ñ‹Ñ…Ð¾Ð´ Ð¸Ð· Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ (Ð½Ð°ÑÑ‚Ð¾ÑÑ‚ÐµÐ»ÑŒÐ½Ð¾ Ñ€ÐµÐºÐ¾Ð¼ÐµÐ½Ð´ÑƒÐµÑ‚ÑÑ Ð·Ð°Ð²ÐµÑ€ÑˆÐ°Ñ‚ÑŒ Ñ€Ð°Ð±Ð¾Ñ‚Ñƒ Ñ‡ÐµÑ€ÐµÐ· ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ 'exit' Ð´Ð»Ñ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ð¾Ð³Ð¾ Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ñ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚Ñ‹Ñ… Ð´ÐµÑÐºÑ€Ð¸Ð¿Ñ‚Ð¾Ñ€Ð¾Ð²)\n"
+			"help - Ð²Ñ‹Ð·Ð¾Ð² ÑÐ¿Ñ€Ð°Ð²ÐºÐ¸ Ð¾ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ðµ\n");
 		goto Input;
 	}
 
@@ -314,9 +313,10 @@ Input:
 
 
 exit:
-	LocalFree(ppThreadSecurityDescriptor);
-	LocalFree(ppProcessSecurityDescriptor);
-	if (hProcessToken) Sys_CloseHandle(hProcessToken);
+	if (ppServiceSecurityDescriptor) LocalFree(ppServiceSecurityDescriptor);
+	if (ppThreadSecurityDescriptor) LocalFree(ppThreadSecurityDescriptor);
+	if (ppProcessSecurityDescriptor) LocalFree(ppProcessSecurityDescriptor);
+	if (::g_hProcessToken) Sys_CloseHandle(::g_hProcessToken);
 	if (hThread) Sys_CloseHandle(hThread);
 	if (hProcess) Sys_CloseHandle(hProcess);
 
