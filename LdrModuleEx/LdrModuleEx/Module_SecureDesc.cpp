@@ -4,6 +4,7 @@
 LPCTSTR GetAccessEx(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 {
 	LPCTSTR Access = nullptr;
+
 	if (ppAuditList) {
 		switch (ppAuditList->pPropertyAccessList->pAccessEntryList->pAccessList->Access) {
 		case ACTRL_PERM_5:
@@ -18,6 +19,7 @@ LPCTSTR GetAccessEx(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 		default: break;
 		}
 	}
+
 	if (ppAccessList) {
 		switch (ppAccessList->pPropertyAccessList->pAccessEntryList->pAccessList->Access) {
 		case ACTRL_RESERVED:
@@ -71,6 +73,16 @@ LPCTSTR GetAccessEx(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 				"                                                  ACTRL_REG_NOTIFY |\n"
 				"                                                  ACTRL_WIN_LIST");
 			break;
+		case ACTRL_PERM_5 | ACTRL_PERM_3:
+			Access = _TEXT("ACTRL_KERNEL_VM_WRITE | ACTRL_KERNEL_VM |\n"
+				"                                                  ACTRL_DS_READ_PROP | ACTRL_DS_LIST |\n"
+				"                                                  ACTRL_FILE_WRITE_PROP | ACTRL_FILE_APPEND |\n"
+				"                                                  ACTRL_PRINT_JADMIN | ACTRL_PRINT_PADMIN |\n"
+				"                                                  ACTRL_SVC_START | ACTRL_SVC_STATUS |\n"
+				"                                                  ACTRL_REG_NOTIFY | ACTRL_REG_CREATE_CHILD |\n"
+				"                                                  ACTRL_WIN_LIST | ACTRL_WIN_CREATE |\n"
+				"                                                  ACTRL_DIR_CREATE_CHILD");
+			break;
 		case ACTRL_PERM_6:
 			Access = _TEXT("ACTRL_KERNEL_DUP_HANDLE |\n"
 				"                                                  ACTRL_DS_WRITE_PROP |\n"
@@ -94,6 +106,16 @@ LPCTSTR GetAccessEx(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 				"                                                  ACTRL_SVC_INTERROGATE |\n"
 				"                                                  ACTRL_WIN_SCREEN");
 			break;
+			case ACTRL_PERM_8 | ACTRL_PERM_5 | ACTRL_PERM_3:
+				Access = _TEXT("ACTRL_KERNEL_SET_INFO | ACTRL_KERNEL_VM_WRITE | ACTRL_KERNEL_VM |\n"
+				"                                                  ACTRL_DS_LIST_OBJECT | ACTRL_DS_READ_PROP | ACTRL_DS_LIST |\n"
+				"                                                  ACTRL_FILE_READ_ATTRIB | ACTRL_FILE_WRITE_PROP | ACTRL_FILE_APPEND |\n"
+				"                                                  ACTRL_PRINT_JADMIN | ACTRL_PRINT_PADMIN |\n"
+				"                                                  ACTRL_SVC_INTERROGATE | ACTRL_SVC_START | ACTRL_SVC_STATUS |\n"
+				"                                                  ACTRL_REG_NOTIFY | ACTRL_REG_CREATE_CHILD |\n"
+				"                                                  ACTRL_WIN_SCREEN | ACTRL_WIN_LIST | ACTRL_WIN_CREATE |\n"
+				"                                                  ACTRL_DIR_CREATE_CHILD");
+				break;
 		case ACTRL_PERM_9:
 			Access = _TEXT("ACTRL_KERNEL_GET_INFO |\n"
 				"                                                  ACTRL_DS_CONTROL_ACCESS |\n"
@@ -196,6 +218,9 @@ LPCTSTR GetAccessEx(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 				"                                                  ACTRL_REG_QUERY |\n"
 				"                                                  ACTRL_WIN_CLIPBRD |\n"
 				"                                                  ACTRL_DIR_LIST");
+			break;
+		case ACTRL_CHANGE_OWNER | ACTRL_CHANGE_ACCESS:
+			Access = _TEXT("ACTRL_CHANGE_OWNER | ACTRL_CHANGE_ACCESS");
 			break;
 		case ACTRL_STD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL:
 			Access = _TEXT("ACTRL_STD_RIGHTS_ALL | SPECIFIC_RIGHTS_ALL");
@@ -429,8 +454,8 @@ VOID ACTRLPrint(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 			for (unsigned j = 0; j < ppAuditList->pPropertyAccessList->pAccessEntryList->cEntries; j++) {
 				_tout <<
 					_TEXT("                ACTRL_ACCESS_ENTRY_LIST[") << j << _TEXT("].AccessList: 0x") << ppAuditList->pPropertyAccessList->pAccessEntryList->pAccessList << std::endl <<
-					//_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: ") << ppAuditList->pPropertyAccessList->pAccessEntryList->pAccessList->Access << std::endl <<
-					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: ") << GetAccessEx(ppAuditList, nullptr) << std::endl <<
+					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: 0x") << std::hex << ppAuditList->pPropertyAccessList->pAccessEntryList->pAccessList->Access <<std::dec << std::endl <<
+					//_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: ") << GetAccessEx(ppAuditList, nullptr) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].AccessFlags: ") << GetAccessFlagEx(ppAuditList, nullptr) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Inheritance: ") << GetInheritanceEx(ppAuditList, nullptr) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].InheritProperty: ") << (PWORD)(ppAuditList->pPropertyAccessList->pAccessEntryList->pAccessList->lpInheritProperty) << std::endl <<
@@ -466,8 +491,8 @@ VOID ACTRLPrint(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 			for (unsigned j = 0; j < ppAccessList->pPropertyAccessList->pAccessEntryList->cEntries; j++) {
 				_tout <<
 					_TEXT("                ACTRL_ACCESS_ENTRY_LIST[") << j << _TEXT("].AccessList: 0x") << ppAccessList->pPropertyAccessList->pAccessEntryList->pAccessList << std::endl <<
-					//_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: 0x") << std::hex << ppAccessList->pPropertyAccessList->pAccessEntryList->pAccessList->Access <<std::dec << std::endl <<
-					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: ") << GetAccessEx(nullptr, ppAccessList) << std::endl <<
+					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: 0x") << std::hex << ppAccessList->pPropertyAccessList->pAccessEntryList->pAccessList->Access <<std::dec << std::endl <<
+					//_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Access: ") << GetAccessEx(nullptr, ppAccessList) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].AccessFlags: ") << GetAccessFlagEx(nullptr, ppAccessList) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].Inheritance: ") << GetInheritanceEx(nullptr, ppAccessList) << std::endl <<
 					_TEXT("                    ACTRL_ACCESS_ENTRY[") << j << _TEXT("].InheritProperty: ") << (PWORD)(ppAccessList->pPropertyAccessList->pAccessEntryList->pAccessList->lpInheritProperty) << std::endl <<
@@ -489,7 +514,7 @@ VOID ACTRLPrint(PACTRL_AUDIT ppAuditList, PACTRL_ACCESS ppAccessList)
 	_tout << _TEXT("    }\n}") << std::endl;
 }
 
-DWORD Sys_GetSecurityDescriptor(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGroup, _In_opt_ PACL ppDacl, _In_ PACL ppSacl,
+DWORD Sys_GetSecurityDescriptorObject(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGroup, _In_opt_ PACL ppDacl, _In_ PACL ppSacl,
 	_In_ PSECURITY_DESCRIPTOR ppSecurityDescriptor, _In_ PACTRL_ACCESS ppAccessList, _In_ PACTRL_AUDIT ppAuditList,
 	_In_ LPTSTR ppOwner, _In_ LPTSTR ppGroup, _In_opt_ HANDLE hObject)
 {
@@ -504,7 +529,7 @@ DWORD Sys_GetSecurityDescriptor(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGro
 
 	if (ppSecurityDescriptor) {
 		if (!IsValidSecurityDescriptor(ppSecurityDescriptor)) {
-			ErrPrint(_TEXT("Sys_GetSecurityDescriptor::IsValidSecurityDescriptor"));
+			FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::IsValidSecurityDescriptor"));
 			return EXIT_FAILURE;
 		}
 		_tout << _TEXT("SECURITY_DESCRIPTOR: 0x") << ppSecurityDescriptor << _TEXT(" (length: ") << GetSecurityDescriptorLength(ppSecurityDescriptor) << _TEXT(" bytes)\n{") << std::endl;
@@ -529,28 +554,28 @@ DWORD Sys_GetSecurityDescriptor(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGro
 
 	if (ppSidGroup) {
 		if (!IsValidSid(ppSidGroup)) {
-			ErrPrint(_TEXT("Sys_GetSecurityDescriptor::IsValidSid::ppSidGroup"));
+			FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::IsValidSid::ppSidGroup"));
 			return EXIT_FAILURE;
 		}
 		_tout << _TEXT("    Offset group: 0x") << ppSidGroup << _TEXT(" (field: ") << sizeof(DWORD) << _TEXT(" bytes)\n");
 	}
 	if (ppSidOwner) {
 		if (!IsValidSid(ppSidOwner)) {
-			ErrPrint(_TEXT("Sys_GetSecurityDescriptor::IsValidSid::ppSidOwner"));
+			FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::IsValidSid::ppSidOwner"));
 			return EXIT_FAILURE;
 		}
 		_tout << _TEXT("    Offset owner: 0x") << ppSidOwner << _TEXT(" (field: ") << sizeof(DWORD) << _TEXT(" bytes)\n");
 	}
 	if (ppSacl) {
 		if (!IsValidAcl(ppSacl)) {
-			ErrPrint(_TEXT("Sys_GetSecurityDescriptor::IsValidAcl::ppSacl"));
+			FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::IsValidAcl::ppSacl"));
 			return EXIT_FAILURE;
 		}
 		_tout << _TEXT("    Offset SACL: 0x") << ppSacl << _TEXT(" (field: ") << sizeof(DWORD) << _TEXT(" bytes)\n");
 	}
 	if (ppDacl) {
 		if (!IsValidAcl(ppDacl)) {
-			ErrPrint(_TEXT("Sys_GetSecurityDescriptor::IsValidAcl::ppDacl"));
+			FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::IsValidAcl::ppDacl"));
 			return EXIT_FAILURE;
 		}
 		_tout << _TEXT("    Offset DACL: 0x") << ppDacl << _TEXT(" (field: ") << sizeof(DWORD) << _TEXT(" bytes)\n");
@@ -571,8 +596,8 @@ DWORD Sys_GetSecurityDescriptor(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGro
 	}
 	else {
 		Sys_SetTextColor(MAGENTA);
-		if (WIN_VISTA || WIN_7) _tout << _TEXT("    SID group: ") << _TEXT("S-") << SidRevision << _TEXT("-5-18 >> NT AUTHORITY\\ÒËÒÚÂÏ‡");
-		else _tout << _TEXT("    SID group: ") << _TEXT("S-") << SidRevision << _TEXT("-5-18 >> NT AUTHORITY\\—»—“≈Ã¿");
+		if (WIN_VISTA || WIN_7) _tout << _TEXT("    SID group: ") << _TEXT("S-") << SidRevision << _TEXT("-5-18 >> NT AUTHORITY\\—Å–∏—Å—Ç–µ–º–∞");
+		else _tout << _TEXT("    SID group: ") << _TEXT("S-") << SidRevision << _TEXT("-5-18 >> NT AUTHORITY\\–°–ò–°–¢–ï–ú–ê");
 		_tout << _TEXT(" (length: ") << GetSecurityDescriptorLength(ppSecurityDescriptor) - sizeof(SECURITY_DESCRIPTOR_CONTROL) * 4 - ppSacl->AclSize << _TEXT(" bytes)\n");
 		Sys_SetTextColor(FLUSH);
 	}
@@ -587,45 +612,48 @@ DWORD Sys_GetSecurityDescriptor(_In_opt_ PSID ppSidOwner, _In_opt_ PSID ppSidGro
 	}
 	else {
 		Sys_SetTextColor(MAGENTA);
-		_tout << _TEXT("    SID owner: ") << _TEXT("S-") << SidRevision << _TEXT("-5-32-544 >> BUILTIN\\¿‰ÏËÌËÒÚ‡ÚÓ˚");
+		_tout << _TEXT("    SID owner: ") << _TEXT("S-") << SidRevision << _TEXT("-5-32-544 >> BUILTIN\\–ê–¥–º–∏–Ω–∏—Å—Ç—Ä–∞—Ç–æ—Ä—ã");
 		_tout << _TEXT(" (length: ") << GetSecurityDescriptorLength(ppSecurityDescriptor) - sizeof(SECURITY_DESCRIPTOR_CONTROL) * 2 - ppSacl->AclSize << _TEXT(" bytes)\n");
 		Sys_SetTextColor(FLUSH);
 	}
 
 	//================================================================================================================================================================
 
-	if (!OpenProcessToken(hObject, TOKEN_QUERY, &hToken)) ErrPrint(_TEXT("Sys_GetSecurityDescriptor::OpenProcessToken"));
-	if (!GetTokenInformation(hToken, TokenIntegrityLevel, nullptr, NULL, &ReturnLength)) {
-		if (ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
-			auto TokenInfoLength = ReturnLength;
-			auto TokenMandatoryLabel = (PTOKEN_MANDATORY_LABEL)LocalAlloc(LMEM_FIXED, TokenInfoLength);
-			if (TokenMandatoryLabel != nullptr) {
-				if (GetTokenInformation(hToken, TokenIntegrityLevel, TokenMandatoryLabel, TokenInfoLength, &ReturnLength)) {
-					auto IntegrityLevel = *GetSidSubAuthority(TokenMandatoryLabel->Label.Sid, (DWORD)(UCHAR)(*GetSidSubAuthorityCount(TokenMandatoryLabel->Label.Sid) - 1));
-					if(!GetTokenInformation(hToken, TokenUIAccess, &UIAccess, sizeof(DWORD), &ReturnLength)) ErrPrint(_TEXT("Sys_GetSecurityDescriptor::GetTokenInformation"));
-					switch (IntegrityLevel) {
-					case SECURITY_MANDATORY_UNTRUSTED_RID: IntegrityLevelType = _TEXT("ML_UNTRUSTED"); break;
-					case SECURITY_MANDATORY_LOW_RID: IntegrityLevelType = _TEXT("ML_LOW"); break;
-					case SECURITY_MANDATORY_MEDIUM_RID:
-						IntegrityLevelType = _TEXT("ML_MEDIUM");
-						if(UIAccess == TRUE) IntegrityLevelType = _TEXT("ML_MEDIUM_UIACCESS"); break;
-					case SECURITY_MANDATORY_MEDIUM_PLUS_RID: IntegrityLevelType = _TEXT("ML_MEDIUM_PLUS"); break;
-					case SECURITY_MANDATORY_HIGH_RID:
-						IntegrityLevelType = _TEXT("ML_HIGH");
-						if (UIAccess == TRUE) IntegrityLevelType = _TEXT("ML_HIGH_UIACCESS"); break;
-					case SECURITY_MANDATORY_SYSTEM_RID: IntegrityLevelType = _TEXT("ML_SYSTEM"); break;
-					case SECURITY_MANDATORY_PROTECTED_PROCESS_RID: IntegrityLevelType = _TEXT("ML_PROTECTED_PROCESS"); break;
-					case SECURITY_MANDATORY_SECURE_PROCESS_RID: IntegrityLevelType = _TEXT("ML_SECURE_PROCESS"); break;
-					default: IntegrityLevelType = _TEXT("fuck"); break;
+	if (::g_krnlObj)
+	{
+		if (!OpenProcessToken(hObject, TOKEN_QUERY, &hToken)) FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::OpenProcessToken"));
+		if (!GetTokenInformation(hToken, TokenIntegrityLevel, nullptr, NULL, &ReturnLength)) {
+			if (ERROR_INSUFFICIENT_BUFFER == GetLastError()) {
+				auto TokenInfoLength = ReturnLength;
+				auto TokenMandatoryLabel = (PTOKEN_MANDATORY_LABEL)LocalAlloc(LMEM_FIXED, TokenInfoLength);
+				if (TokenMandatoryLabel != nullptr) {
+					if (GetTokenInformation(hToken, TokenIntegrityLevel, TokenMandatoryLabel, TokenInfoLength, &ReturnLength)) {
+						auto IntegrityLevel = *GetSidSubAuthority(TokenMandatoryLabel->Label.Sid, (DWORD)(UCHAR)(*GetSidSubAuthorityCount(TokenMandatoryLabel->Label.Sid) - 1));
+						if (!GetTokenInformation(hToken, TokenUIAccess, &UIAccess, sizeof(DWORD), &ReturnLength)) FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::GetTokenInformation"));
+						switch (IntegrityLevel) {
+						case SECURITY_MANDATORY_UNTRUSTED_RID: IntegrityLevelType = _TEXT("ML_UNTRUSTED"); break;
+						case SECURITY_MANDATORY_LOW_RID: IntegrityLevelType = _TEXT("ML_LOW"); break;
+						case SECURITY_MANDATORY_MEDIUM_RID:
+							IntegrityLevelType = _TEXT("ML_MEDIUM");
+							if (UIAccess == TRUE) IntegrityLevelType = _TEXT("ML_MEDIUM_UIACCESS"); break;
+						case SECURITY_MANDATORY_MEDIUM_PLUS_RID: IntegrityLevelType = _TEXT("ML_MEDIUM_PLUS"); break;
+						case SECURITY_MANDATORY_HIGH_RID:
+							IntegrityLevelType = _TEXT("ML_HIGH");
+							if (UIAccess == TRUE) IntegrityLevelType = _TEXT("ML_HIGH_UIACCESS"); break;
+						case SECURITY_MANDATORY_SYSTEM_RID: IntegrityLevelType = _TEXT("ML_SYSTEM"); break;
+						case SECURITY_MANDATORY_PROTECTED_PROCESS_RID: IntegrityLevelType = _TEXT("ML_PROTECTED_PROCESS"); break;
+						case SECURITY_MANDATORY_SECURE_PROCESS_RID: IntegrityLevelType = _TEXT("ML_SECURE_PROCESS"); break;
+						default: IntegrityLevelType = _TEXT("fuck"); break;
+						}
 					}
+					else FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::GetTokenInformation"));
 				}
-				else ErrPrint(_TEXT("Sys_GetSecurityDescriptor::GetTokenInformation"));
+				else FormatWinApiMsg(_TEXT("Sys_GetSecurityDescriptor::TokenMandatoryLabel::TOKEN_MANDATORY_LABEL"));
+				LocalFree(TokenMandatoryLabel);
 			}
-			else ErrPrint(_TEXT("Sys_GetSecurityDescriptor::TokenMandatoryLabel::TOKEN_MANDATORY_LABEL"));
-			LocalFree(TokenMandatoryLabel);
 		}
+		Sys_CloseHandle(hToken);
 	}
-	Sys_CloseHandle(hToken);
 
 	//================================================================================================================================================================
 
