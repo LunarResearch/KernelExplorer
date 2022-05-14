@@ -55,22 +55,101 @@ LPCTSTR Sys_ListProcess(_In_ DWORD dwProcessId)
 /// Open Process
 /// </summary>
 DWORD SecurityInfoAllAccessFlags = NULL;
-LPTSTR ppProcessOwner = nullptr, ppProcessGroup = nullptr, ppThreadOwner = nullptr, ppThreadGroup = nullptr;
-PACTRL_ACCESS ppProcessAccessList{}, ppThreadAccessList{};
-PACTRL_AUDIT ppProcessAuditList{}, ppThreadAuditList{};
+LPTSTR ppProcessOwner = nullptr, ppProcessGroup = nullptr, ppThreadOwner = nullptr, ppThreadGroup = nullptr, ppServiceOwner = nullptr, ppServiceGroup = nullptr;
+PACTRL_ACCESS ppProcessAccessList{}, ppThreadAccessList{}, ppServiceAccessList{};
+PACTRL_AUDIT ppProcessAuditList{}, ppThreadAuditList{}, ppServiceAuditList{};
 
-HANDLE Sys_OpenProcess(_In_ LPCTSTR ProcessNameOrProcessId, _Out_ PHANDLE hpThread, _Out_ PSECURITY_DESCRIPTOR* pppProcessSecurityDescriptor, _Out_ PSECURITY_DESCRIPTOR* pppThreadSecurityDescriptor)
+HANDLE Sys_QueryObjectSecurity(_In_ LPCTSTR ObjectNameOrObjectId, _Out_ PHANDLE hpThread,
+	_Out_ PSECURITY_DESCRIPTOR* pppProcessSecurityDescriptor, _Out_ PSECURITY_DESCRIPTOR* pppThreadSecurityDescriptor, _Out_ PSECURITY_DESCRIPTOR* pppServiceSecurityDescriptor)
 {
-	DWORD dwProcessId = NULL, dwThreadId = NULL, SecurityInfoSaclOnlyFlags = SACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION | UNPROTECTED_SACL_SECURITY_INFORMATION;
-	PSECURITY_DESCRIPTOR ppProcessSecurityDescriptor = nullptr, ppThreadSecurityDescriptor = nullptr;
-	PSID ppProcessSidOwner = nullptr, ppProcessSidGroup = nullptr, ppThreadSidOwner = nullptr, ppThreadSidGroup = nullptr;
+	DWORD dwProcessId = NULL, dwThreadId = NULL,
+		SecurityInfoSaclOnlyFlags = SACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION | UNPROTECTED_SACL_SECURITY_INFORMATION,
+		SecurityInfoServiceAccessFlags = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION | LABEL_SECURITY_INFORMATION |
+		PROTECTED_DACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION | UNPROTECTED_DACL_SECURITY_INFORMATION | UNPROTECTED_SACL_SECURITY_INFORMATION;
+
+	PSECURITY_DESCRIPTOR ppProcessSecurityDescriptor = nullptr, ppThreadSecurityDescriptor = nullptr, ppServiceSecurityDescriptor = nullptr;
+	PSID ppProcessSidOwner = nullptr, ppProcessSidGroup = nullptr, ppThreadSidOwner = nullptr, ppThreadSidGroup = nullptr, ppServiceSidOwner = nullptr, ppServiceSidGroup = nullptr;
 	_GetSecurityInfoEx GetSecurityInfoEx = nullptr;
-	PACL ppProcessDacl{}, ppProcessSacl{}, ppThreadDacl{}, ppThreadSacl{};
+	_GetNamedSecurityInfoEx GetNamedSecurityInfoEx = nullptr;
+	PACL ppProcessDacl{}, ppProcessSacl{}, ppThreadDacl{}, ppThreadSacl{}, ppServiceDacl{}, ppServiceSacl{};
 	GetSingatureEncoding Signature{};
 
-	if (!Sys_IsNumber(ProcessNameOrProcessId)) dwProcessId = Sys_GetProcessId(ProcessNameOrProcessId, NULL);
-	else dwProcessId = Sys_GetProcessId(nullptr, _ttol(ProcessNameOrProcessId));
-	dwThreadId = Sys_GetThreadId(dwProcessId);
+	if (!Sys_IsNumber(ObjectNameOrObjectId)) {
+		dwProcessId = Sys_GetProcessId(ObjectNameOrObjectId, NULL);
+		if ((_tcscmp(ObjectNameOrObjectId, _TEXT("System")) == 0) ||
+			(_tcscmp(ObjectNameOrObjectId, _TEXT("Registry")) == 0) ||
+			(_tcscmp(ObjectNameOrObjectId, _TEXT("Memory Compression")) == 0))
+			::g_krnlObj = TRUE;
+		for (auto i = 0; i < ObjectNameOrObjectId[i] != '\0'; i++)
+			if (ObjectNameOrObjectId[i] == '.') {
+				::g_krnlObj = TRUE;
+				break;
+			}
+	}
+	else {
+		dwProcessId = Sys_GetProcessId(nullptr, _ttol(ObjectNameOrObjectId));
+		::g_krnlObj = TRUE;
+	}
+	if (::g_krnlObj) dwThreadId = Sys_GetThreadId(dwProcessId);
+
+	if (WIN_VISTA) {
+		GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_WinVista, Signature.mask_GetSecurityInfoEx_WinVista);
+		GetNamedSecurityInfoEx = (_GetNamedSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetNamedSecurityInfoEx_WinVista, Signature.mask_GetNamedSecurityInfoEx_WinVista);
+	}
+	else if (WIN_7) {
+		GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win7, Signature.mask_GetSecurityInfoEx_Win7);
+		GetNamedSecurityInfoEx = (_GetNamedSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetNamedSecurityInfoEx_Win7, Signature.mask_GetNamedSecurityInfoEx_Win7);
+	}
+	else if (WIN_8) {
+		GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win8, Signature.mask_GetSecurityInfoEx_Win8);
+		GetNamedSecurityInfoEx = (_GetNamedSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetNamedSecurityInfoEx_Win8, Signature.mask_GetNamedSecurityInfoEx_Win8);
+	}
+	else if (WIN_8_1) {
+		GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win8_1, Signature.mask_GetSecurityInfoEx_Win8_1);
+		GetNamedSecurityInfoEx = (_GetNamedSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetNamedSecurityInfoEx_Win8_1, Signature.mask_GetNamedSecurityInfoEx_Win8_1);
+	}
+	else if (WIN_10) {
+		GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win10, Signature.mask_GetSecurityInfoEx_Win10);
+		GetNamedSecurityInfoEx = (_GetNamedSecurityInfoEx)Sys_GetProcAddressFromPattern(
+			_TEXT("advapi32"), Signature.pattern_GetNamedSecurityInfoEx_Win10, Signature.mask_GetNamedSecurityInfoEx_Win10);
+	}
+	else _tout << _TEXT("No signature GetSecurityInfoEx or GetNamedSecurityInfoEx for your OS.") << std::endl;
+
+	if (!::g_krnlObj)
+	{
+		Sys_OpenService(ObjectNameOrObjectId);
+
+		if(GetNamedSecurityInfo(ObjectNameOrObjectId, SE_SERVICE, SecurityInfoServiceAccessFlags,
+			&ppServiceSidOwner, &ppServiceSidGroup, &ppServiceDacl, &ppServiceSacl, &ppServiceSecurityDescriptor) != ERROR_SUCCESS)
+			FormatWinApiMsg(_TEXT("Sys_OpenProcess::GetNamedSecurityInfo"));
+		pppServiceSecurityDescriptor = &ppServiceSecurityDescriptor;
+		
+		if(GetNamedSecurityInfoEx)
+			if(GetNamedSecurityInfoEx(ObjectNameOrObjectId, SE_SERVICE, SecurityInfoServiceAccessFlags,
+				nullptr, nullptr, &ppServiceAccessList, &ppServiceAuditList, &ppServiceOwner, &ppServiceGroup) != ERROR_SUCCESS)
+				FormatWinApiMsg(_TEXT("Sys_OpenProcess::GetNamedSecurityInfoEx"));
+
+		_tout << _TEXT("\nSEVICE_");
+		Sys_GetSecurityDescriptorObject(
+			ppServiceSidOwner, ppServiceSidGroup, ppServiceDacl, ppServiceSacl, ppServiceSecurityDescriptor,	// from GetSecurityInfo
+			ppServiceAccessList, ppServiceAuditList, ppServiceOwner, ppServiceGroup, nullptr					// from GetSecurityInfoEx
+		);
+
+		pppProcessSecurityDescriptor = nullptr;
+		pppThreadSecurityDescriptor = nullptr;
+		hpThread = nullptr;
+
+		return nullptr;
+	}
 
 	auto hProcess = OpenProcess(PROCESS_ALL_ACCESS | ACCESS_SYSTEM_SECURITY, FALSE, dwProcessId);
 	if (hProcess) {
@@ -113,41 +192,43 @@ HANDLE Sys_OpenProcess(_In_ LPCTSTR ProcessNameOrProcessId, _Out_ PHANDLE hpThre
 		ATTRIBUTE_SECURITY_INFORMATION | SCOPE_SECURITY_INFORMATION | BACKUP_SECURITY_INFORMATION |
 		PROCESS_TRUST_LABEL_SECURITY_INFORMATION | ACCESS_FILTER_SECURITY_INFORMATION;
 
-	if (GetSecurityInfo(hProcess, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, &ppProcessSidOwner, &ppProcessSidGroup, &ppProcessDacl, &ppProcessSacl, &ppProcessSecurityDescriptor) != ERROR_SUCCESS)
+	if (GetSecurityInfo(hProcess, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, &ppProcessSidOwner, &ppProcessSidGroup,
+		&ppProcessDacl, &ppProcessSacl, &ppProcessSecurityDescriptor) != ERROR_SUCCESS)
 		GetSecurityInfo(hProcess, SE_KERNEL_OBJECT, SecurityInfoSaclOnlyFlags, nullptr, nullptr, nullptr, &ppProcessSacl, &ppProcessSecurityDescriptor);
 	pppProcessSecurityDescriptor = &ppProcessSecurityDescriptor;
 
-	if (GetSecurityInfo(hThread, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, &ppThreadSidOwner, &ppThreadSidGroup, &ppThreadDacl, &ppThreadSacl, &ppThreadSecurityDescriptor) != ERROR_SUCCESS)
+	if (GetSecurityInfo(hThread, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, &ppThreadSidOwner, &ppThreadSidGroup,
+		&ppThreadDacl, &ppThreadSacl, &ppThreadSecurityDescriptor) != ERROR_SUCCESS)
 		GetSecurityInfo(hThread, SE_KERNEL_OBJECT, SecurityInfoSaclOnlyFlags, nullptr, nullptr, nullptr, &ppThreadSacl, &ppThreadSecurityDescriptor);
 	pppThreadSecurityDescriptor = &ppThreadSecurityDescriptor;
-
-	if (WIN_VISTA) GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_WinVista, Signature.mask_GetSecurityInfoEx_WinVista);
-	else if (WIN_7) GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win7, Signature.mask_GetSecurityInfoEx_Win7);
-	else if (WIN_8) GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win8, Signature.mask_GetSecurityInfoEx_Win8);
-	else if (WIN_8_1) GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win8_1, Signature.mask_GetSecurityInfoEx_Win8_1);
-	else if (WIN_10) GetSecurityInfoEx = (_GetSecurityInfoEx)Sys_GetProcAddressFromPattern(_TEXT("advapi32"), Signature.pattern_GetSecurityInfoEx_Win10, Signature.mask_GetSecurityInfoEx_Win10);
-	else _tout << _TEXT("No signature GetSecurityInfoEx for your OS.") << std::endl;
+	pppServiceSecurityDescriptor = nullptr;
 
 	if (GetSecurityInfoEx) {
-		if (GetSecurityInfoEx(hProcess, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, nullptr, nullptr, &ppProcessAccessList, &ppProcessAuditList, &ppProcessOwner, &ppProcessGroup) != ERROR_SUCCESS)
+		if (GetSecurityInfoEx(hProcess, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, nullptr, nullptr,
+			&ppProcessAccessList, &ppProcessAuditList, &ppProcessOwner, &ppProcessGroup) != ERROR_SUCCESS)
 			GetSecurityInfoEx(hProcess, SE_KERNEL_OBJECT, SecurityInfoSaclOnlyFlags, nullptr, nullptr, nullptr, &ppProcessAuditList, nullptr, nullptr);
-		if (GetSecurityInfoEx(hThread, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, nullptr, nullptr, &ppThreadAccessList, &ppThreadAuditList, &ppThreadOwner, &ppThreadGroup) != ERROR_SUCCESS)
+		
+		if (GetSecurityInfoEx(hThread, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, nullptr, nullptr,
+			&ppThreadAccessList, &ppThreadAuditList, &ppThreadOwner, &ppThreadGroup) != ERROR_SUCCESS)
 			GetSecurityInfoEx(hThread, SE_KERNEL_OBJECT, SecurityInfoSaclOnlyFlags, nullptr, nullptr, nullptr, &ppThreadAuditList, nullptr, nullptr);
 	}
 
 	_tout << _TEXT("\nPROCESS_");
-	Sys_GetSecurityDescriptor(
+	Sys_GetSecurityDescriptorObject(
 		ppProcessSidOwner, ppProcessSidGroup, ppProcessDacl, ppProcessSacl, ppProcessSecurityDescriptor,	// from GetSecurityInfo
 		ppProcessAccessList, ppProcessAuditList, ppProcessOwner, ppProcessGroup, hProcess					// from GetSecurityInfoEx
 	);
 
 	_tout << _TEXT("\nTHREAD_");
-	Sys_GetSecurityDescriptor(
+	Sys_GetSecurityDescriptorObject(
 		ppThreadSidOwner, ppThreadSidGroup, ppThreadDacl, ppThreadSacl, ppThreadSecurityDescriptor,		// from GetSecurityInfo
 		ppThreadAccessList, ppThreadAuditList, ppThreadOwner, ppThreadGroup, hProcess					// from GetSecurityInfoEx
 	);
 
+	::g_hProcessToken = Sys_GetProcessTokenInformation(hProcess);
+
 LinkForReqUser:
+	::g_krnlObj = FALSE;
 	return hProcess;
 }
 
@@ -262,7 +343,7 @@ DWORD Sys_SetSecurityInfo(_In_ DWORD dwProcessId)
 
 		if (hThread) {
 			if (SetSecurityInfoEx(hThread, SE_KERNEL_OBJECT, SecurityInfoAllAccessFlags, nullptr, ppThreadAccessList, ppThreadAuditList, ppThreadOwner, ppThreadGroup, &ThreadOverlapped) != ERROR_SUCCESS) {
-				ErrPrint(_TEXT("Sys_SetSecurityInfo::SetSecurityInfoEx::Thread"));
+				FormatWinApiMsg(_TEXT("Sys_SetSecurityInfo::SetSecurityInfoEx::Thread"));
 				return EXIT_FAILURE;
 			}
 		}
