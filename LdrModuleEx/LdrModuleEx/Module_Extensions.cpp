@@ -22,16 +22,32 @@ BOOL Sys_IsNumber(_In_ LPCTSTR str)
 /// <summary>
 /// Error Code Definitions For The Win32 API Functions
 /// </summary>
-VOID ErrPrint(_In_ LPCTSTR FooMsg)
+VOID FormatWinApiMsg(_In_ LPCTSTR FooMsg)
 {
 	_TCHAR strBuffer[MAX_PATH]{};
 
 	if (ERROR_INVALID_IMAGE_HASH == GetLastError()) {
-		_tout << _TEXT("Ñèñòåìå Windows íå óäàåòñÿ ïðîâåðèòü öèôðîâóþ ïîäïèñü ýòîãî ôàéëà. Ïðè ïîñëåäíåì èçìåíåíèè îáîðóäîâàíèÿ èëè ïðîãðàììíîãî îáåñïå÷åíèÿ ìîãëà áûòü ïðîèçâåäåíà óñòàíîâêà íåïðàâèëüíî ïîäïèñàííîãî èëè ïîâðåæäåííîãî ôàéëà ëèáî âðåäîíîñíîé ïðîãðàììû íåèçâåñòíîãî ïðîèñõîæäåíèÿ.") << std::endl;
+		_tout << _TEXT("Ð¡Ð¸ÑÑ‚ÐµÐ¼Ðµ Windows Ð½Ðµ ÑƒÐ´Ð°ÐµÑ‚ÑÑ Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ñ‚ÑŒ Ñ†Ð¸Ñ„Ñ€Ð¾Ð²ÑƒÑŽ Ð¿Ð¾Ð´Ð¿Ð¸ÑÑŒ ÑÑ‚Ð¾Ð³Ð¾ Ñ„Ð°Ð¹Ð»Ð°. ÐŸÑ€Ð¸ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÐµÐ¼ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¸ Ð¾Ð±Ð¾Ñ€ÑƒÐ´Ð¾Ð²Ð°Ð½Ð¸Ñ Ð¸Ð»Ð¸ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ð½Ð¾Ð³Ð¾ Ð¾Ð±ÐµÑÐ¿ÐµÑ‡ÐµÐ½Ð¸Ñ Ð¼Ð¾Ð³Ð»Ð° Ð±Ñ‹Ñ‚ÑŒ Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½Ð° ÑƒÑÑ‚Ð°Ð½Ð¾Ð²ÐºÐ° Ð½ÐµÐ¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ°Ð½Ð½Ð¾Ð³Ð¾ Ð¸Ð»Ð¸ Ð¿Ð¾Ð²Ñ€ÐµÐ¶Ð´ÐµÐ½Ð½Ð¾Ð³Ð¾ Ñ„Ð°Ð¹Ð»Ð° Ð»Ð¸Ð±Ð¾ Ð²Ñ€ÐµÐ´Ð¾Ð½Ð¾ÑÐ½Ð¾Ð¹ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹ Ð½ÐµÐ¸Ð·Ð²ÐµÑÑ‚Ð½Ð¾Ð³Ð¾ Ð¿Ñ€Ð¾Ð¸ÑÑ…Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ.") << std::endl;
 	}
 	else {
 		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), strBuffer, 260, nullptr);
-		Sys_SetTextColor(YELLOW); _tout << FooMsg << _TEXT(" -> "); Sys_SetTextColor(RED); _tout << _TEXT("Êîä ") << GetLastError() << _TEXT(": ") << strBuffer; Sys_SetTextColor(FLUSH);
+		Sys_SetTextColor(YELLOW); _tout << FooMsg << _TEXT(" -> "); Sys_SetTextColor(RED); _tout << _TEXT("ÐšÐ¾Ð´ ") << GetLastError() << _TEXT(": ") << strBuffer; Sys_SetTextColor(FLUSH);
+	}
+	_tin.get();
+}
+
+
+/// <summary>
+/// Error Code Definitions For The Native API Functions
+/// </summary>
+VOID FormatNtStatusMsg(_In_ LPCTSTR FooMsg, _In_ NTSTATUS Status)
+{
+	_TCHAR strBuffer[MAX_PATH]{};
+
+	if (STATUS_SUCCESS != Status) {
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_IGNORE_INSERTS,
+			GetModuleHandle(_TEXT("ntdll")), Status, FORMAT_MESSAGE_FROM_STRING, strBuffer, 260, nullptr);
+		Sys_SetTextColor(YELLOW); _tout << FooMsg << _TEXT(" -> "); Sys_SetTextColor(RED); _tout << _TEXT("ÐšÐ¾Ð´ ") << Status << _TEXT(": ") << strBuffer; Sys_SetTextColor(FLUSH);
 	}
 	_tin.get();
 }
@@ -46,7 +62,7 @@ VOID Sys_CloseHandle(_In_ HANDLE hObject)
 		if (ERROR_INVALID_HANDLE == GetLastError())
 			return;
 		else {
-			ErrPrint(_TEXT("CloseHandle"));
+			FormatWinApiMsg(_TEXT("CloseHandle"));
 			return;
 		}
 	}
@@ -55,7 +71,7 @@ VOID Sys_CloseHandle(_In_ HANDLE hObject)
 VOID Sys_CloseServiceHandle(_In_ SC_HANDLE hSCObject)
 {
 	if (!CloseServiceHandle(hSCObject)) {
-		ErrPrint(_TEXT("CloseServiceHandle"));
+		FormatWinApiMsg(_TEXT("CloseServiceHandle"));
 		return;
 	}
 }
@@ -63,7 +79,7 @@ VOID Sys_CloseServiceHandle(_In_ SC_HANDLE hSCObject)
 VOID Sys_CloseDesktop(_In_ HDESK hDesktop)
 {
 	if (!CloseDesktop(hDesktop)) {
-		ErrPrint(_TEXT("CloseDesktop"));
+		FormatWinApiMsg(_TEXT("CloseDesktop"));
 		return;
 	}
 }
@@ -84,7 +100,7 @@ DWORD Sys_GetProcessId(_In_opt_ LPCTSTR ProcessName, _In_opt_ DWORD dwProcessId)
 				if (_tcscmp(ProcessEntry.szExeFile, ProcessName) == 0) {
 					dwProcessId = ProcessEntry.th32ProcessID;
 					if (!ProcessIdToSessionId(dwProcessId, &dwSessionId)) {
-						ErrPrint(_TEXT("Sys_GetProcessId::ProcessIdToSessionId"));
+						FormatWinApiMsg(_TEXT("Sys_GetProcessId::ProcessIdToSessionId"));
 						return EXIT_FAILURE;
 					}
 					_tout << _TEXT("\nProcess name: ") << ProcessEntry.szExeFile << std::endl;
@@ -96,7 +112,7 @@ DWORD Sys_GetProcessId(_In_opt_ LPCTSTR ProcessName, _In_opt_ DWORD dwProcessId)
 			else {
 				if (ProcessEntry.th32ProcessID == dwProcessId) {
 					if (!ProcessIdToSessionId(dwProcessId, &dwSessionId)) {
-						ErrPrint(_TEXT("Sys_GetProcessId::ProcessIdToSessionId"));
+						FormatWinApiMsg(_TEXT("Sys_GetProcessId::ProcessIdToSessionId"));
 						return EXIT_FAILURE;
 					}
 					_tout << _TEXT("\nProcess name: ") << ProcessEntry.szExeFile << std::endl;
@@ -155,7 +171,7 @@ SIZE_T FindPattern(LPVOID lpAddress, ULONG Length, LPBYTE lpPattern, LPCTSTR pMa
 		if (MemoryBasicInfo.State != MEM_FREE) {
 			auto Buffer = new BYTE[MemoryBasicInfo.RegionSize];
 			if (!ReadProcessMemory(GetCurrentProcess(), MemoryBasicInfo.BaseAddress, Buffer, MemoryBasicInfo.RegionSize, nullptr)) {
-				ErrPrint(_TEXT("FindPattern::ReadProcessMemory"));
+				FormatWinApiMsg(_TEXT("FindPattern::ReadProcessMemory"));
 				return EXIT_FAILURE;
 			}
 			for (unsigned i = 0; i < MemoryBasicInfo.RegionSize; i++)
@@ -178,7 +194,7 @@ SIZE_T Sys_GetProcAddressFromPattern(_In_ LPCTSTR dllName, _In_ LPBYTE lpPattren
 	auto hModule = GetModuleHandle(dllName);
 	if (hModule)
 		if (!GetModuleInformation(GetCurrentProcess(), hModule, &hModInfo, sizeof(MODULEINFO))) {
-			ErrPrint(_TEXT("Sys_GetProcAddressFromPattern::GetModuleInformation"));
+			FormatWinApiMsg(_TEXT("Sys_GetProcAddressFromPattern::GetModuleInformation"));
 			return EXIT_FAILURE;
 		}
 
@@ -199,20 +215,20 @@ DWORD Sys_TerminateProcess(_In_ DWORD dwProcessId)
 
 	if (!hProcess) {
 		if (!WTSTerminateProcess(WTS_CURRENT_SERVER_HANDLE, dwProcessId, NULL)) {
-			ErrPrint(_TEXT("Sys_TerminateProcess::WTSTerminateProcess"));
+			FormatWinApiMsg(_TEXT("Sys_TerminateProcess::WTSTerminateProcess"));
 			return EXIT_FAILURE;
 		}
 	}
 
 	else {
 		if (!GetExitCodeProcess(hProcess, &dwExitCode)) {
-			ErrPrint(_TEXT("Sys_TerminateProcess::GetExitCodeProcess"));
+			FormatWinApiMsg(_TEXT("Sys_TerminateProcess::GetExitCodeProcess"));
 			return EXIT_FAILURE;
 		}
 
 		if (!TerminateProcess(hProcess, dwExitCode)) {
 			if (!WTSTerminateProcess(WTS_CURRENT_SERVER_HANDLE, dwProcessId, dwExitCode)) {
-				ErrPrint(_TEXT("Sys_TerminateProcess::(WTS)TerminateProcess"));
+				FormatWinApiMsg(_TEXT("Sys_TerminateProcess::(WTS)TerminateProcess"));
 				return EXIT_FAILURE;
 			}
 		}
@@ -245,12 +261,12 @@ BOOL Sys_IsPrivilegeEnable(_In_ LPCTSTR pszPrivilegeName, _In_ HANDLE hToken)
 	PrivilegeSet.PrivilegeCount = 1;
 
 	if (!LookupPrivilegeValue(nullptr, pszPrivilegeName, &PrivilegeSet.Privilege[0].Luid)) {
-		ErrPrint(_TEXT("Sys_IsPrivilegeEnable::LookupPrivilegeValue"));
+		FormatWinApiMsg(_TEXT("Sys_IsPrivilegeEnable::LookupPrivilegeValue"));
 		return EXIT_FAILURE;
 	}
 
 	if (!PrivilegeCheck(hToken, &PrivilegeSet, &Result)) {
-		ErrPrint(_TEXT("Sys_IsPrivilegeEnable::PrivilegeCheck"));
+		FormatWinApiMsg(_TEXT("Sys_IsPrivilegeEnable::PrivilegeCheck"));
 		return EXIT_FAILURE;
 	}
 
