@@ -64,8 +64,7 @@ HANDLE Sys_QueryObjectSecurity(_In_ LPCTSTR ObjectNameOrObjectId, _Out_ PHANDLE 
 {
 	DWORD dwProcessId = NULL, dwThreadId = NULL,
 		SecurityInfoSaclOnlyFlags = SACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION | UNPROTECTED_SACL_SECURITY_INFORMATION,
-		SecurityInfoServiceAccessFlags = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION | LABEL_SECURITY_INFORMATION |
-		PROTECTED_DACL_SECURITY_INFORMATION | PROTECTED_SACL_SECURITY_INFORMATION | UNPROTECTED_DACL_SECURITY_INFORMATION | UNPROTECTED_SACL_SECURITY_INFORMATION;
+		SecurityInfoServiceAccessFlags = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION | SACL_SECURITY_INFORMATION | LABEL_SECURITY_INFORMATION;
 
 	PSECURITY_DESCRIPTOR ppProcessSecurityDescriptor = nullptr, ppThreadSecurityDescriptor = nullptr, ppServiceSecurityDescriptor = nullptr;
 	PSID ppProcessSidOwner = nullptr, ppProcessSidGroup = nullptr, ppThreadSidOwner = nullptr, ppThreadSidGroup = nullptr, ppServiceSidOwner = nullptr, ppServiceSidGroup = nullptr;
@@ -130,13 +129,13 @@ HANDLE Sys_QueryObjectSecurity(_In_ LPCTSTR ObjectNameOrObjectId, _Out_ PHANDLE 
 
 		if(GetNamedSecurityInfo(ObjectNameOrObjectId, SE_SERVICE, SecurityInfoServiceAccessFlags,
 			&ppServiceSidOwner, &ppServiceSidGroup, &ppServiceDacl, &ppServiceSacl, &ppServiceSecurityDescriptor) != ERROR_SUCCESS)
-			FormatWinApiMsg(_TEXT("Sys_OpenProcess::GetNamedSecurityInfo"));
+			FormatWinApiMsg(_TEXT("Sys_QueryObjectSecurity::GetNamedSecurityInfo"));
 		pppServiceSecurityDescriptor = &ppServiceSecurityDescriptor;
 		
 		if(GetNamedSecurityInfoEx)
 			if(GetNamedSecurityInfoEx(ObjectNameOrObjectId, SE_SERVICE, SecurityInfoServiceAccessFlags,
 				nullptr, nullptr, &ppServiceAccessList, &ppServiceAuditList, &ppServiceOwner, &ppServiceGroup) != ERROR_SUCCESS)
-				FormatWinApiMsg(_TEXT("Sys_OpenProcess::GetNamedSecurityInfoEx"));
+				FormatWinApiMsg(_TEXT("Sys_QueryObjectSecurity::GetNamedSecurityInfoEx"));
 
 		_tout << _TEXT("\nSEVICE_");
 		Sys_GetSecurityDescriptorObject(
